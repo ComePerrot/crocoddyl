@@ -8,6 +8,7 @@
 
 #include "residual.hpp"
 #include "crocoddyl/multibody/residuals/state.hpp"
+#include "crocoddyl/multibody/residuals/anticipated-state.hpp"
 #include "crocoddyl/core/residuals/control.hpp"
 #include "crocoddyl/multibody/residuals/com-position.hpp"
 #include "crocoddyl/multibody/residuals/com-velocity.hpp"
@@ -17,7 +18,6 @@
 #include "crocoddyl/multibody/residuals/frame-translation.hpp"
 #include "crocoddyl/multibody/residuals/frame-velocity.hpp"
 #include "crocoddyl/multibody/residuals/control-gravity.hpp"
-#include "crocoddyl/multibody/residuals/pair-collision.hpp"
 #include "crocoddyl/core/utils/exception.hpp"
 
 namespace crocoddyl {
@@ -29,6 +29,9 @@ std::ostream& operator<<(std::ostream& os, ResidualModelTypes::Type type) {
   switch (type) {
     case ResidualModelTypes::ResidualModelState:
       os << "ResidualModelState";
+      break;
+    case ResidualModelTypes::ResidualModelAnticipatedState:
+      os << "ResidualModelAnticipatedState";
       break;
     case ResidualModelTypes::ResidualModelControl:
       os << "ResidualModelControl";
@@ -57,9 +60,6 @@ std::ostream& operator<<(std::ostream& os, ResidualModelTypes::Type type) {
     case ResidualModelTypes::ResidualModelControlGrav:
       os << "ResidualModelControlGrav";
       break;
-    case ResidualModelTypes::ResidualModelPairCollision:
-      os << "ResidualModelPairCollision";
-      break;  
     case ResidualModelTypes::NbResidualModelTypes:
       os << "NbResidualModelTypes";
       break;
@@ -104,6 +104,9 @@ boost::shared_ptr<crocoddyl::ResidualModelAbstract> ResidualModelFactory::create
     case ResidualModelTypes::ResidualModelState:
       residual = boost::make_shared<crocoddyl::ResidualModelState>(state, state->rand(), nu);
       break;
+    case ResidualModelTypes::ResidualModelAnticipatedState:
+      residual = boost::make_shared<crocoddyl::ResidualModelAnticipatedState>(state, nu, alpha);
+      break;
     case ResidualModelTypes::ResidualModelControl:
       residual = boost::make_shared<crocoddyl::ResidualModelControl>(state, Eigen::VectorXd::Random(nu));
       break;
@@ -134,10 +137,6 @@ boost::shared_ptr<crocoddyl::ResidualModelAbstract> ResidualModelFactory::create
       break;
     case ResidualModelTypes::ResidualModelControlGrav:
       residual = boost::make_shared<crocoddyl::ResidualModelControlGrav>(state, nu);
-      break;
-    case ResidualModelTypes::ResidualModelPairCollision:
-      residual = boost::make_shared<crocoddyl::ResidualModelPairCollision>(state, nu, geometry, 0, 
-          state->get_pinocchio()->frames[frame_index].parent );
       break;
     default:
       throw_pretty(__FILE__ ": Wrong ResidualModelTypes::Type given");

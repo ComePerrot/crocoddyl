@@ -27,6 +27,7 @@ namespace unittest {
 struct ResidualModelTypes {
   enum Type {
     ResidualModelState,
+    ResidualModelAnticipatedState,
     ResidualModelControl,
     ResidualModelCoMPosition,
     ResidualModelCoMVelocity,
@@ -36,7 +37,6 @@ struct ResidualModelTypes {
     ResidualModelFrameTranslation,
     ResidualModelFrameVelocity,
     ResidualModelControlGrav,
-    ResidualModelPairCollision,
     NbResidualModelTypes
   };
   static std::vector<Type> init_all() {
