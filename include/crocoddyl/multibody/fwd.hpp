@@ -173,6 +173,11 @@ template <typename Scalar>
 class ResidualModelPairCollisionTpl;
 template <typename Scalar>
 struct ResidualDataPairCollisionTpl;
+
+template <typename Scalar>
+class ResidualModelVelCollisionTpl;
+template <typename Scalar>
+struct ResidualDataVelCollisionTpl;
 #endif
 
 // cost
@@ -425,6 +430,8 @@ typedef ResidualDataPairCollisionTpl<double> ResidualDataPairCollision;
 #ifdef PINOCCHIO_WITH_HPP_FCL
 typedef ResidualModelPairCollisionTpl<double> ResidualModelPairCollision;
 typedef ResidualDataPairCollisionTpl<double> ResidualDataPairCollision;
+typedef ResidualModelVelCollisionTpl<double> ResidualModelVelCollision;
+typedef ResidualDataVelCollisionTpl<double> ResidualDataVelCollision;
 #endif
 
 DEPRECATED("Use ResidualModelFrameTranslation with CostModelResidual",

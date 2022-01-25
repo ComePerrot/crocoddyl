@@ -50,6 +50,7 @@ void exposeMultibody() {
 
 #ifdef PINOCCHIO_WITH_HPP_FCL
   exposeResidualPairCollision();
+  exposeResidualVelCollision();
 #endif
 
   exposeCostState();

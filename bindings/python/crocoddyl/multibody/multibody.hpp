@@ -53,6 +53,7 @@ void exposeResidualImpulseCoM();
 
 #ifdef PINOCCHIO_WITH_HPP_FCL
 void exposeResidualPairCollision();
+void exposeResidualVelCollision();
 #endif
 
 void exposeCostState();
