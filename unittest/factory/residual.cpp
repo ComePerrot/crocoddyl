@@ -11,6 +11,7 @@
 #include "crocoddyl/multibody/residuals/anticipated-state.hpp"
 #include "crocoddyl/core/residuals/control.hpp"
 #include "crocoddyl/multibody/residuals/com-position.hpp"
+#include "crocoddyl/multibody/residuals/dcm-position.hpp"
 #include "crocoddyl/multibody/residuals/com-velocity.hpp"
 // #include "crocoddyl/multibody/residuals/centroidal-momentum.hpp"
 #include "crocoddyl/multibody/residuals/frame-placement.hpp"
@@ -18,6 +19,7 @@
 #include "crocoddyl/multibody/residuals/frame-translation.hpp"
 #include "crocoddyl/multibody/residuals/frame-velocity.hpp"
 #include "crocoddyl/multibody/residuals/control-gravity.hpp"
+#include "crocoddyl/multibody/residuals/vel-collision.hpp"
 #include "crocoddyl/core/utils/exception.hpp"
 
 namespace crocoddyl {
@@ -38,6 +40,9 @@ std::ostream& operator<<(std::ostream& os, ResidualModelTypes::Type type) {
       break;
     case ResidualModelTypes::ResidualModelCoMPosition:
       os << "ResidualModelCoMPosition";
+      break;
+    case ResidualModelTypes::ResidualModelDCMPosition:
+      os << "ResidualModelDCMPosition";
       break;
     case ResidualModelTypes::ResidualModelCoMVelocity:
       os << "ResidualModelCoMVelocity";
@@ -60,6 +65,9 @@ std::ostream& operator<<(std::ostream& os, ResidualModelTypes::Type type) {
     case ResidualModelTypes::ResidualModelControlGrav:
       os << "ResidualModelControlGrav";
       break;
+    case ResidualModelTypes::ResidualModelVelCollision:
+      os << "ResidualModelVelCollision";
+      break;
     case ResidualModelTypes::NbResidualModelTypes:
       os << "NbResidualModelTypes";
       break;
@@ -79,25 +87,22 @@ boost::shared_ptr<crocoddyl::ResidualModelAbstract> ResidualModelFactory::create
   boost::shared_ptr<crocoddyl::StateMultibody> state =
       boost::static_pointer_cast<crocoddyl::StateMultibody>(state_factory.create(state_type));
   pinocchio::FrameIndex frame_index = state->get_pinocchio()->frames.size() - 1;
-  pinocchio::SE3 frame_SE3 = pinocchio::SE3::Random();
-  pinocchio::SE3 frame_SE3_obstacle = pinocchio::SE3::Random();
-  if (nu == std::numeric_limits<std::size_t>::max()) {
-    nu = state->get_nv();
-  }
+  
   double alpha = fabs(Eigen::VectorXd::Random(1)[0]);
-  double beta = fabs(Eigen::VectorXd::Random(1)[0]);
+  pinocchio::SE3 frame_SE3_obstacle = pinocchio::SE3::Random();
+  pinocchio::SE3 frame_SE3 = pinocchio::SE3::Random();
   boost::shared_ptr<pinocchio::GeometryModel> geometry = 
       boost::make_shared<pinocchio::GeometryModel>(pinocchio::GeometryModel());
   pinocchio::GeomIndex ig_frame = 
       geometry->addGeometryObject(pinocchio::GeometryObject("frame",
                                                             frame_index,
                                                             state->get_pinocchio()->frames[frame_index].parent, 
-                                                            boost::shared_ptr <hpp::fcl::CollisionGeometry>(new hpp::fcl::Capsule(0, alpha)), 
+                                                            boost::shared_ptr <hpp::fcl::CollisionGeometry>(new hpp::fcl::Sphere(0)), 
                                                             frame_SE3));
   pinocchio::GeomIndex ig_obs = geometry->addGeometryObject(pinocchio::GeometryObject("obs",
 											  state->get_pinocchio()->getFrameId("universe"),
 											  state->get_pinocchio()->frames[state->get_pinocchio()->getFrameId("universe")].parent,
-											  boost::shared_ptr <hpp::fcl::CollisionGeometry>(new hpp::fcl::Capsule(0,beta)),
+											  boost::shared_ptr <hpp::fcl::CollisionGeometry>(new hpp::fcl::Sphere(0)),
 											  frame_SE3_obstacle)); 
   geometry->addCollisionPair(pinocchio::CollisionPair(ig_frame,ig_obs));
   switch (residual_type) {
@@ -112,6 +117,9 @@ boost::shared_ptr<crocoddyl::ResidualModelAbstract> ResidualModelFactory::create
       break;
     case ResidualModelTypes::ResidualModelCoMPosition:
       residual = boost::make_shared<crocoddyl::ResidualModelCoMPosition>(state, Eigen::Vector3d::Random(), nu);
+      break;
+    case ResidualModelTypes::ResidualModelDCMPosition:
+      residual = boost::make_shared<crocoddyl::ResidualModelDCMPosition>(state, Eigen::Vector3d::Random(), nu, alpha);
       break;
     case ResidualModelTypes::ResidualModelCoMVelocity:
       residual = boost::make_shared<crocoddyl::ResidualModelCoMVelocity>(state, Eigen::Vector3d::Random(), nu);
@@ -137,6 +145,10 @@ boost::shared_ptr<crocoddyl::ResidualModelAbstract> ResidualModelFactory::create
       break;
     case ResidualModelTypes::ResidualModelControlGrav:
       residual = boost::make_shared<crocoddyl::ResidualModelControlGrav>(state, nu);
+      break;
+    case ResidualModelTypes::ResidualModelVelCollision:
+      residual = boost::make_shared<crocoddyl::ResidualModelVelCollision>(state, nu, geometry, 0, 
+          frame_index,pinocchio::WORLD,alpha);
       break;
     default:
       throw_pretty(__FILE__ ": Wrong ResidualModelTypes::Type given");

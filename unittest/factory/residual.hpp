@@ -30,6 +30,7 @@ struct ResidualModelTypes {
     ResidualModelAnticipatedState,
     ResidualModelControl,
     ResidualModelCoMPosition,
+    ResidualModelDCMPosition,
     ResidualModelCoMVelocity,
     // ResidualModelCentroidalMomentum,  // @todo Figure out the pinocchio callbacks.
     ResidualModelFramePlacement,
@@ -37,6 +38,7 @@ struct ResidualModelTypes {
     ResidualModelFrameTranslation,
     ResidualModelFrameVelocity,
     ResidualModelControlGrav,
+    ResidualModelVelCollision,
     NbResidualModelTypes
   };
   static std::vector<Type> init_all() {

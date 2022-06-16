@@ -99,6 +99,11 @@ template <typename Scalar>
 struct ResidualDataCoMPositionTpl;
 
 template <typename Scalar>
+class ResidualModelDCMPositionTpl;
+template <typename Scalar>
+struct ResidualDataDCMPositionTpl;
+
+template <typename Scalar>
 class ResidualModelCoMVelocityTpl;
 template <typename Scalar>
 struct ResidualDataCoMVelocityTpl;
@@ -167,6 +172,11 @@ template <typename Scalar>
 class ResidualModelAnticipatedStateTpl;
 template <typename Scalar>
 struct ResidualDataAnticipatedStateTpl;
+
+template <typename Scalar>
+class ResidualModelCenterOfPressureTpl;
+template <typename Scalar>
+struct ResidualDataCenterOfPressureTpl;
 
 #ifdef PINOCCHIO_WITH_HPP_FCL
 template <typename Scalar>
@@ -396,6 +406,8 @@ typedef ResidualModelCentroidalMomentumTpl<double> ResidualModelCentroidalMoment
 typedef ResidualDataCentroidalMomentumTpl<double> ResidualDataCentroidalMomentum;
 typedef ResidualModelCoMPositionTpl<double> ResidualModelCoMPosition;
 typedef ResidualDataCoMPositionTpl<double> ResidualDataCoMPosition;
+typedef ResidualModelDCMPositionTpl<double> ResidualModelDCMPosition;
+typedef ResidualDataDCMPositionTpl<double> ResidualDataDCMPosition;
 typedef ResidualModelCoMVelocityTpl<double> ResidualModelCoMVelocity;
 typedef ResidualDataCoMVelocityTpl<double> ResidualDataCoMVelocity;
 typedef ResidualModelContactForceTpl<double> ResidualModelContactForce;
@@ -424,6 +436,8 @@ typedef ResidualModelStateTpl<double> ResidualModelState;
 typedef ResidualDataStateTpl<double> ResidualDataState;
 typedef ResidualModelAnticipatedStateTpl<double> ResidualModelAnticipatedState;
 typedef ResidualDataAnticipatedStateTpl<double> ResidualDataAnticipatedState;
+typedef ResidualModelCenterOfPressureTpl<double> ResidualModelCenterOfPressure;
+typedef ResidualDataCenterOfPressureTpl<double> ResidualDataCenterOfPressure;
 typedef ResidualModelPairCollisionTpl<double> ResidualModelPairCollision;
 typedef ResidualDataPairCollisionTpl<double> ResidualDataPairCollision;
 

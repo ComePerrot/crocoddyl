@@ -14,6 +14,7 @@
 #include "crocoddyl/multibody/residuals/contact-friction-cone.hpp"
 #include "crocoddyl/multibody/residuals/contact-wrench-cone.hpp"
 #include "crocoddyl/multibody/residuals/contact-control-gravity.hpp"
+#include "crocoddyl/multibody/residuals/cop.hpp"
 #include "crocoddyl/core/utils/exception.hpp"
 
 namespace crocoddyl {
@@ -37,6 +38,9 @@ std::ostream &operator<<(std::ostream &os, ContactCostModelTypes::Type type) {
       break;
     case ContactCostModelTypes::CostModelResidualContactControlGrav:
       os << "CostModelResidualContactControlGrav";
+      break;
+    case ContactCostModelTypes::CostModelResidualModelCenterOfPressure:
+      os << "CostModelResidualModelCenterOfPressure";
       break;
     case ContactCostModelTypes::NbContactCostModelTypes:
       os << "NbContactCostModelTypes";
@@ -103,6 +107,12 @@ boost::shared_ptr<crocoddyl::DifferentialActionModelAbstract> ContactCostModelFa
       cost = boost::make_shared<crocoddyl::CostModelResidual>(
           state, ActivationModelFactory().create(activation_type, state->get_nv()),
           boost::make_shared<crocoddyl::ResidualModelContactControlGrav>(state, nu));
+      break;
+    case ContactCostModelTypes::CostModelResidualModelCenterOfPressure:
+      cost = boost::make_shared<crocoddyl::CostModelResidual>(
+          state, ActivationModelFactory().create(activation_type, 2),
+          boost::make_shared<crocoddyl::ResidualModelCenterOfPressure>(
+              state, model_factory.get_frame_id(), nu));
       break;
     default:
       throw_pretty(__FILE__ ": Wrong ContactCostModelTypes::Type given");
